@@ -304,7 +304,7 @@ void GiaiPhong(SV **dssv, int sosinhvien, int ***sokitu)
 
 void main()
 {
-	FILE *fpin, *file1, *file2, *file3, *file4;
+	FILE *fpin, *file1, *file2, *file3, *file4, *file5;
 	//FILE * fpin, *file1, *file2, *file3, *file4, *file5, *file6, *file7, *file8, *file9, *file10, *arr[10] = { file1, file2, file3, file4, file5, file6, file7, file8, file9, file10 };
 	//char* tenfile[10] = { "D:\\web1.txt", "D:\\web2.txt", "Website\\web3.html", "Website\\web4.html", "Website\\web5.html", "Website\\web6.html", "Website\\web7.html", "Website\\web8.html", "Website\\web9.html", "Website\\web10.html" };
 	SV *dssv;
@@ -341,6 +341,11 @@ void main()
 	_setmode(_fileno(file4), _O_U8TEXT);
 	GhiFile(&file4, dssv[3], *(sokitu + 3));
 	fclose(file4);
+
+	file5 = fopen("Website//web5.html", "w+");
+	_setmode(_fileno(file4), _O_U8TEXT);
+	GhiFile(&file5, dssv[4], *(sokitu + 4));
+	fclose(file5);
 
 	GiaiPhong(&dssv, sosinhvien, &sokitu);
 	system("pause");
