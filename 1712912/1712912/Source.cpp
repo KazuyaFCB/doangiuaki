@@ -29,12 +29,10 @@ void DocFile(FILE *fpin, SV **dssv, int *sosinhvien, int ***sokitu)
 	fseek(fpin, 3L, SEEK_CUR);
 	bool flag = false;
 	fwscanf(fpin, L"%d", sosinhvien);
-	rewind(fpin);
-	fseek(fpin, 3L, SEEK_CUR);
 	while (1)
 	{
 		wc = fgetwc(fpin);
-		if (wc == L'\"')    //Di chuyển tới dấu ngoặc kép của sinh viên đầu tiên, trường đầu tiên
+		if (wc == L'\n')    //Di chuyển tới dấu ngoặc kép của sinh viên đầu tiên, trường đầu tiên
 		    break;
 	}
 	*dssv = (SV*)malloc(*sosinhvien*sizeof(SV));
@@ -45,121 +43,116 @@ void DocFile(FILE *fpin, SV **dssv, int *sosinhvien, int ***sokitu)
 		wc = fgetwc(fpin);
 		tempt[demkitu] = wc;
 		demkitu++;
-		if (wc == L'\"')
+		if (wc == L',' || wc == L'\n' || wc == WEOF)
 		{
 			count++;
 			flag = true;
-			*(*((*sokitu)+demsosinhvien)+count) = demkitu - 1;
+			for (int i = 0; i < demkitu - 1; i++)      //Tìm xem có dấu ngoặc kép hay không
+			{
+				if (tempt[i] == L'\"')                  //Nếu có thì xóa
+				{
+					for (int j = i; j < demkitu - 1; j++)
+						tempt[j] = tempt[j + 1];
+					i--; 
+					demkitu--;
+				}
+			}
+			demkitu--; //Trừ kí tự , \n WEOF ra
+			*(*((*sokitu) + demsosinhvien) + count) = demkitu;
 		}
 		if (flag == true)
 		{
 			if (count == 1)
 			{
-				(*((*dssv) + demsosinhvien)).mssv = (char*)malloc((demkitu - 1)*sizeof(char));
-				for (int i = 0; i < demkitu - 1; i++)
+				(*((*dssv) + demsosinhvien)).mssv = (char*)malloc(demkitu*sizeof(char));
+				for (int i = 0; i < demkitu; i++)
 				{
 					(*((*dssv) + demsosinhvien)).mssv[i] = tempt[i];
 				}
-				demkitu = 0;
 			}
 			else if (count == 2)
 			{
-				(*((*dssv) + demsosinhvien)).hovaten = (wchar_t*)malloc((demkitu - 1)*sizeof(wchar_t));
-				for (int i = 0; i < demkitu - 1; i++)
+				(*((*dssv) + demsosinhvien)).hovaten = (wchar_t*)malloc(demkitu*sizeof(wchar_t));
+				for (int i = 0; i < demkitu; i++)
 				{
 					(*((*dssv) + demsosinhvien)).hovaten[i] = tempt[i];
 				}
-				demkitu = 0;
 			}
 			else if (count == 3)
 			{
-				(*((*dssv) + demsosinhvien)).khoa = (wchar_t*)malloc((demkitu - 1)*sizeof(wchar_t));
-				for (int i = 0; i < demkitu - 1; i++)
+				(*((*dssv) + demsosinhvien)).khoa = (wchar_t*)malloc(demkitu*sizeof(wchar_t));
+				for (int i = 0; i < demkitu; i++)
 				{
 					(*((*dssv) + demsosinhvien)).khoa[i] = tempt[i];
 				}
-				demkitu = 0;
 			}
 			else if (count == 4)
 			{
-				char *year = (char*)malloc((demkitu - 1) * sizeof(char));
-				for (int i = 0; i < demkitu - 1; i++)
+				char *year = (char*)malloc(demkitu* sizeof(char));
+				for (int i = 0; i < demkitu; i++)
 				{
 					year[i] = tempt[i];
 				}
 				(*((*dssv) + demsosinhvien)).khoatuyen = atoi(year);
-				demkitu = 0;
 				free(year);
 			}
 			else if (count == 5)
 			{
-				(*((*dssv) + demsosinhvien)).ngaysinh = (char*)malloc((demkitu - 1)*sizeof(char));
-				for (int i = 0; i < demkitu - 1; i++)
+				(*((*dssv) + demsosinhvien)).ngaysinh = (char*)malloc(demkitu*sizeof(char));
+				for (int i = 0; i < demkitu; i++)
 				{
 					(*((*dssv) + demsosinhvien)).ngaysinh[i] = tempt[i];
 				}
-				demkitu = 0;
 			}
 			else if (count == 6)
 			{
-				(*((*dssv) + demsosinhvien)).email = (char*)malloc((demkitu - 1)*sizeof(char));
-				for (int i = 0; i < demkitu - 1; i++)
+				(*((*dssv) + demsosinhvien)).email = (char*)malloc(demkitu*sizeof(char));
+				for (int i = 0; i < demkitu; i++)
 				{
 					(*((*dssv) + demsosinhvien)).email[i] = tempt[i];
 				}
-				demkitu = 0;
 			}
 			else if (count == 7)
 			{
-				(*((*dssv) + demsosinhvien)).hinhanhcanhan = (wchar_t*)malloc((demkitu - 1)*sizeof(wchar_t));
-				for (int i = 0; i < demkitu - 1; i++)
+				(*((*dssv) + demsosinhvien)).hinhanhcanhan = (wchar_t*)malloc(demkitu*sizeof(wchar_t));
+				for (int i = 0; i < demkitu; i++)
 				{
 					(*((*dssv) + demsosinhvien)).hinhanhcanhan[i] = tempt[i];
 				}
-				demkitu = 0;
 			}
 			else if (count == 8)
 			{
-				(*((*dssv) + demsosinhvien)).sothich1 = (wchar_t*)malloc((demkitu - 1)*sizeof(wchar_t));
-				for (int i = 0; i < demkitu - 1; i++)
+				(*((*dssv) + demsosinhvien)).sothich1 = (wchar_t*)malloc(demkitu*sizeof(wchar_t));
+				for (int i = 0; i < demkitu; i++)
 				{
 					(*((*dssv) + demsosinhvien)).sothich1[i] = tempt[i];
 				}
-				demkitu = 0;
 			}
 			else if (count == 9)
 			{
-				(*((*dssv) + demsosinhvien)).sothich2 = (wchar_t*)malloc((demkitu - 1)*sizeof(wchar_t));
-				for (int i = 0; i < demkitu - 1; i++)
+				(*((*dssv) + demsosinhvien)).sothich2 = (wchar_t*)malloc(demkitu*sizeof(wchar_t));
+				for (int i = 0; i < demkitu; i++)
 				{
 					(*((*dssv) + demsosinhvien)).sothich2[i] = tempt[i];
 				}
-				demkitu = 0;
 			}
 			else if (count == 10)
 			{
-				(*((*dssv) + demsosinhvien)).motabanthan = (wchar_t*)malloc((demkitu - 1)*sizeof(wchar_t));
-				for (int i = 0; i < demkitu - 1; i++)
+				(*((*dssv) + demsosinhvien)).motabanthan = (wchar_t*)malloc(demkitu*sizeof(wchar_t));
+				for (int i = 0; i < demkitu; i++)
 				{
 					(*((*dssv) + demsosinhvien)).motabanthan[i] = tempt[i];
 				}
-				demkitu = 0;
 			}
 			if (count == 10)
 			{
 				demsosinhvien++;
 				count = 0;
-				demkitu = 0;
 				if (demsosinhvien == *sosinhvien)
 					break;
 				*((*sokitu) + demsosinhvien) = (int*)malloc(field*sizeof(int));
 			}
-			while (1)
-			{
-				wc = fgetwc(fpin);
-				if (wc == L'\"')   //Di chuyển đến dấu ngoặc kép của trường tiếp theo
-					break;
-			}
+			demkitu = 0;
 			flag = false;
 		}
 	}
